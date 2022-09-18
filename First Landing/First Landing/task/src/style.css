@@ -12,6 +12,8 @@ main {
 
 footer {
   min-height: 30vh;
+  max-width: 100%;
+  background-color: rgba(0, 0, 0, .85);
 }
 
 nav {
@@ -40,7 +42,7 @@ p {
   text-align: center;
 }
 
-div a {
+#home a {
   display: inline-block;
   border: 1px solid;
   border-radius: 0.25rem;
@@ -68,3 +70,11 @@ div a {
   border-radius: 21px 21px 0 0;
 }
 
+#contact {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#contact-col1 {
+  max-width: 100%;
+}

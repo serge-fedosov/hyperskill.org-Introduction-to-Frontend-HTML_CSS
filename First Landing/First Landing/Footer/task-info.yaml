@@ -859,6 +859,92 @@ files:
         await new Test().runTests()
     }).timeout(30000);
   learner_created: false
+- name: src/02.jpg
+  visible: true
+  learner_created: true
+- name: src/logo.png
+  visible: true
+  learner_created: true
+- name: src/style.css
+  visible: true
+  text: |+
+    body {
+      max-height: 600px;
+    }
+
+    header {
+      min-height: 10vh;
+    }
+
+    main {
+      min-height: 60vh;
+    }
+
+    footer {
+      min-height: 30vh;
+    }
+
+    nav {
+      max-width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      color: #8e8e8e;
+      background-color: rgba(0, 0, 0, .85);
+    }
+
+    #link_logo,
+    #link_home,
+    #link_product,
+    #link_contact {
+        align-self: center;
+    }
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 300;
+    }
+
+    #home {
+      overflow: hidden;
+      text-align: center;
+    }
+
+    div a {
+      display: inline-block;
+      border: 1px solid;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      text-decoration: none;
+      padding: .375rem .75rem .375rem .75rem;
+      color: azure;
+      background-color: blue;
+    }
+
+    #product {
+      display: flex;
+      width: 800px;
+    }
+
+    #col-1,
+    #col-2 {
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #col-1 img,
+    #col-2 img {
+      width: 296px;
+      border-radius: 21px 21px 0 0;
+    }
+
+  learner_created: true
+- name: src/01.jpg
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/18927#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Sun, 18 Sep 2022 18:33:05 UTC
 record: -1

@@ -22,7 +22,7 @@ class Test extends StageTest {
                 if (typeof parentNode !== "string") return !parentNode.querySelector(node)
                 const element = document.body.querySelector(node)
                 if (!element) return true
-                if (nodeName && element.nodeName.toLowerCase() !== nodeName) return true
+                if(nodeName && element.nodeName.toLowerCase() !== nodeName) return true
                 const parent = element.parentElement
                 return parent.nodeName.toLowerCase() !== parentNode
             };
@@ -47,6 +47,7 @@ class Test extends StageTest {
                     style = Math.floor(style.split("px")[0]) + 1
                     correctVal = Math.floor(correctVal.split("px")[0]) + 1
                 }
+                // console.log(style)
                 return !style || style !== correctVal
             };
             this.correctStyleIn = (node, prop, correctVal) => {
@@ -661,7 +662,176 @@ class Test extends StageTest {
 
             return correct()
 
-        })]
+        }), this.page.execute(() => {
+            // test #32
+            // CONTACT EXIST
+
+            // check if contact div  exist
+            const contactDiv = document.body.querySelector("#contact");
+            let errorMsg = "The div tag with the id of 'contact' is missing inside the footer tag.";
+            if (this.notExist("#contact", "footer", "div")) return wrong(errorMsg);
+
+            // COL EXIST
+
+            // check if col div exist
+            errorMsg = "The column div with the id of 'contact-col1' tag is missing inside the contact div tag.";
+            if (this.notExist("#contact-col1", contactDiv, "div")) return wrong(errorMsg);
+
+            // ANCHOR EXIST
+
+            const colDiv = contactDiv.querySelector("#contact-col1")
+
+            // check if anchor exist
+            errorMsg = "The anchor tag with the id of 'footer_link_logo' is missing inside the column div tag.";
+            if (this.notExist("#footer_link_logo", colDiv, "a")) return wrong(errorMsg);
+
+            // check if img exist
+            const linkLogo = document.body.querySelector("#footer_link_logo");
+            errorMsg = "The image tag is missing inside the link tag with the id of 'footer_link_logo'.";
+            if (this.notExist("img", linkLogo)) return wrong(errorMsg);
+
+            // CONTAINER DIV
+
+            // check if div exist
+            errorMsg = "The div tag wrapping the rest of the links after the footer_link_logo anchor is missing inside" +
+                " the column div tag.";
+            if (this.notExist("a + div", colDiv, "div")) return wrong(errorMsg);
+
+            // ANCHORS EXIST
+
+            // check if anchor exist
+            const wrapperDiv = colDiv.querySelector("a + div");
+            errorMsg = "The anchor tag with the id of 'footer_link_home' is missing inside the wrapper div tag.";
+            if (this.notExist("#footer_link_home", wrapperDiv, "a")) return wrong(errorMsg);
+
+            // check if anchor exist
+            errorMsg = "The anchor tag with the id of 'footer_link_product' is missing inside the wrapper div tag.";
+            if (this.notExist("#footer_link_product", wrapperDiv, "a")) return wrong(errorMsg);
+
+            // check if anchor exist
+            errorMsg = "The anchor tag with the id of 'footer_link_contact' is missing inside the wrapper div tag.";
+            if (this.notExist("#footer_link_contact", wrapperDiv, "a")) return wrong(errorMsg);
+
+            // PARAGRAPH EXIST
+
+            // check if p exist
+            errorMsg = "The paragraph tag is missing inside the column div tag.";
+            if (this.notExist("div + p", colDiv, "p")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #33
+            // FOOTER STYLE
+
+            // check if footer has max-width style
+            let errorMsg = "The footer tag doesn't have the correct max-width value.";
+            if (this.correctStyle("footer", "maxWidth", "100%")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #34
+            // CONTACT FLEX
+
+            // check if contact has flex style
+            let errorMsg = "The contact div tag doesn't have the correct display value.";
+            if (this.correctStyle("#contact", "display", "flex")) return wrong(errorMsg)
+
+            // check if contact has flex wrap style
+            errorMsg = "The contact div tag doesn't have the correct flex-wrap value.";
+            if (this.correctStyle("#contact", "flexWrap", "wrap")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #35
+            // COL STYLE
+
+            // check if column has max-width style
+            let errorMsg = "The contact col1 div tag doesn't have the correct max-width value.";
+            if (this.correctStyle("#contact-col1", "maxWidth", "100%")) return wrong(errorMsg)
+
+            return correct()
+
+        }),
+        // test #36 removed
+        this.page.execute(() => {
+            // test #37
+            // FOOTER LINKS HREF
+
+            // LINK_LOGO
+            // check if link logo href correct
+            let errorMsg = "The anchor tag with the id of 'footer_link_logo' is missing the correct href attribute.";
+            if (this.correctAttr("#footer_link_logo", "href", "#home")) return wrong(errorMsg);
+
+            // LINK_HOME
+            // check if link home href correct
+            errorMsg = "The anchor tag with the id of 'footer_link_home' is missing the correct href attribute.";
+            if (this.correctAttr("#footer_link_home", "href", "#home")) return wrong(errorMsg);
+
+            // LINK_PRODUCT
+            // check if footer_link product href correct
+            errorMsg = "The anchor tag with the id of 'footer_link_product' is missing the correct href attribute.";
+            if (this.correctAttr("#footer_link_product", "href", "#product")) return wrong(errorMsg);
+
+            // LINK_CONTACT
+            // check if footer_link contact href correct
+            errorMsg = "The anchor tag with the id of 'footer_link_contact' is missing the correct href attribute.";
+            if (this.correctAttr("#footer_link_contact", "href", "#contact")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #38
+            // LINK IMG
+
+            // check if img has correct src
+            let errorMsg = "The image tag in '#footer_link_logo' doesn't have an src attribute value.";
+            if (this.correctAttr("#footer_link_logo > img", "src", "")) return wrong(errorMsg);
+
+            // check if #footer_link_logo > img has correct width
+            errorMsg = "The image tag in '#footer_link_logo' doesn't have the correct width attribute value.";
+            if (this.correctAttr("#footer_link_logo > img", "width", "64")) return wrong(errorMsg);
+
+            // check if #footer_link_logo > img has correct height
+            errorMsg = "The image tag in '#footer_link_logo' doesn't have the correct height attribute value.";
+            if (this.correctAttr("#footer_link_logo > img", "height", "64")) return wrong(errorMsg);
+
+            // check if #footer_link_logo > img has correct title
+            errorMsg = "The image tag in '#footer_link_logo' doesn't have a title attribute value.";
+            if (this.correctAttr("#footer_link_logo > img", "title", "")) return wrong(errorMsg);
+
+            // check if img has correct alt
+            errorMsg = "The image tag in '#footer_link_logo' doesn't have an alt attribute value.";
+            if (this.correctAttr("#footer_link_logo > img", "alt", "")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #39
+            // WRAPPER DIV
+
+            const wrapperDiv = document.body.querySelector("#contact-col1 > a + div");
+
+            let errorMsg = "The div tag wrapping the rest of the links should be a direct child of the contact-col1 " +
+                "div after the footer_link_logo anchor.";
+            if (!wrapperDiv) return wrong(errorMsg);
+
+            // PARAGRAPH STYLE
+            const paragraph = document.body.querySelector("#contact > div > div + p");
+
+            errorMsg = "The paragraph tag should be a direct child of the contact-col1 " +
+                "div after all the footer link elements.";
+            if (!paragraph) return wrong(errorMsg);
+
+            errorMsg = "The paragraph tag after the footer links doesn't have the correct inner text value.";
+            if (this.innerTextExist(paragraph, "2022")) return wrong(errorMsg);
+
+            return correct()
+        }),
+        // test #40 removed
+    ]
 
 
 }
