@@ -1,15 +1,31 @@
 body {
-    max-height: 600px;
+  max-height: 600px;
 }
 
 header {
-    min-height: 10vh;
+  min-height: 10vh;
 }
 
 main {
-    min-height: 60vh;
+  min-height: 60vh;
 }
 
 footer {
-    min-height: 30vh;
+  min-height: 30vh;
+}
+
+nav {
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  color: #8e8e8e;
+  background-color: rgba(0, 0, 0, .85);
+}
+
+#link_logo,
+#link_home,
+#link_product,
+#link_contact {
+    align-self: center;
 }

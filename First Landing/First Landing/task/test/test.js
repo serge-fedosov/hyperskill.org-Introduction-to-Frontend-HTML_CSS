@@ -7,31 +7,34 @@ class Test extends StageTest {
 
     page = this.getPage(pagePath)
 
-
     tests = [this.node.execute(async () => {
         // set viewport
         await this.page.open()
         await this.page.setViewport({width: 815, height: 600})
-
         return correct()
     }),
         this.page.execute(() => {
             // test #1
             // # OF NODES
+
             // HELPERS-->
-            this.notExist = (node, correctVal = "body", nodeName) => {
+            this.notExist = (node, parentNode = "body", nodeName) => {
                 const element = document.body.querySelector(node)
                 if (!element) return true
-                if(nodeName && element.nodeName.toLowerCase() !== nodeName) return true
+                if (nodeName && element.nodeName.toLowerCase() !== nodeName) return true
                 const parent = element.parentElement
-                return parent.nodeName.toLowerCase() !== correctVal
+                return parent.nodeName.toLowerCase() !== parentNode
             };
-            this.innerTextExist = (node) => {
+            this.innerTextExist = (node, correctVal) => {
                 const element = document.body.querySelector(node);
+                if (correctVal) return !element.innerText.trim().includes(correctVal)
                 return !element.innerText || element.innerText.trim().length === 0;
             };
-            this.correctAttr = (attr, correctVal) => {
-                return !attr || !attr.includes(correctVal)
+            this.correctAttr = (node, attr, correctVal) => {
+                const element = document.querySelector(node)
+                if (!element) return true
+                const _attr = element.getAttribute(attr)
+                return !_attr || !_attr.includes(correctVal)
             };
             this.correctStyle = (node, prop, correctVal) => {
                 const element = document.querySelector(node);
@@ -41,13 +44,7 @@ class Test extends StageTest {
                     correctVal = Math.floor(correctVal.split("px")[0]) + 1
                 }
                 return !style || style !== correctVal
-            }
-            this.bgColorExist = (node) => {
-                const empty = "rgba(0, 0, 0, 0)";
-                const element = document.querySelector(node);
-                const style = getComputedStyle(element).backgroundColor;
-                return !style || style.trim() === empty;
-            }
+            };
             // <--HELPERS
 
             // check number of nodes in body
@@ -130,8 +127,144 @@ class Test extends StageTest {
         }),
         // test #6 removed
         // test #7 removed
-    ]
+        this.page.execute(() => {
+            // test #8
+            // NAV
 
+            // check if nav exist
+            let errorMsg = "The nav tag is missing inside the header tag.";
+            if (this.notExist("nav", "header")) return wrong(errorMsg);
+
+            // CONTAINER STYLE
+
+            // check if nav has max-width style
+            errorMsg = "The nav tag doesn't have the correct max-width value.";
+            if (this.correctStyle("nav", "maxWidth", "100%")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #9
+            // NAV FLEX
+
+            // check if nav has flex style
+            let errorMsg = "The nav tag doesn't have the correct display value.";
+            if (this.correctStyle("nav", "display", "flex")) return wrong(errorMsg)
+
+            // check if nav has flex wrap style
+            errorMsg = "The nav tag doesn't have the correct flex-wrap value.";
+            if (this.correctStyle("nav", "flexWrap", "wrap")) return wrong(errorMsg)
+
+            return correct()
+
+        }),
+        // test #10 removed
+        this.page.execute(() => {
+            // test #11
+            // LINKS EXIST
+
+            // LINK_LOGO
+            // check if link logo exist
+            let errorMsg = "The anchor tag with the id of 'link_logo' is missing inside the nav tag.";
+            if (this.notExist("#link_logo", "nav", "a")) return wrong(errorMsg);
+
+            // LINK_HOME
+            // check if link home exist
+            errorMsg = "The anchor tag with the id of 'link_home' is missing inside the nav tag.";
+            if (this.notExist("#link_home", "nav", "a")) return wrong(errorMsg);
+
+            // LINK_PRODUCT
+            // check if link product exist
+            errorMsg = "The anchor tag with the id of 'link_product' is missing inside the nav tag.";
+            if (this.notExist("#link_product", "nav", "a")) return wrong(errorMsg);
+
+            // LINK_CONTACT
+            // check if link contact exist
+            errorMsg = "The anchor tag with the id of 'link_contact' is missing inside the nav tag.";
+            if (this.notExist("#link_contact", "nav", "a")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #12
+            // LINKS HREF
+
+            // LINK_LOGO
+            // check if link logo href correct
+            let errorMsg = "The anchor tag with the id of 'link_logo' is missing the correct href attribute.";
+            if (this.correctAttr("#link_logo", "href", "#home")) return wrong(errorMsg);
+
+            // LINK_HOME
+            // check if link home href correct
+            errorMsg = "The anchor tag with the id of 'link_home' is missing the correct href attribute.";
+            if (this.correctAttr("#link_home", "href", "#home")) return wrong(errorMsg);
+
+            // LINK_PRODUCT
+            // check if link product href correct
+            errorMsg = "The anchor tag with the id of 'link_product' is missing the correct href attribute.";
+            if (this.correctAttr("#link_product", "href", "#product")) return wrong(errorMsg);
+
+            // LINK_CONTACT
+            // check if link contact href correct
+            errorMsg = "The anchor tag with the id of 'link_contact' is missing the correct href attribute.";
+            if (this.correctAttr("#link_contact", "href", "#contact")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #13
+            // LINK IMG
+
+            // check if img exist
+            let errorMsg = "The image tag is missing inside the link tag with the id of 'link_logo'.";
+            if (this.notExist("img", "a")) return wrong(errorMsg);
+
+            // check if img has correct src
+            errorMsg = "The image tag in '#link_logo' doesn't have an src attribute value.";
+            if (this.correctAttr("img", "src", "")) return wrong(errorMsg);
+
+            // check if img has correct width
+            errorMsg = "The image tag in '#link_logo' doesn't have the correct width attribute value.";
+            if (this.correctAttr("img", "width", "64")) return wrong(errorMsg);
+
+            // check if img has correct height
+            errorMsg = "The image tag in '#link_logo' doesn't have the correct height attribute value.";
+            if (this.correctAttr("img", "height", "64")) return wrong(errorMsg);
+
+            // check if img has correct title
+            errorMsg = "The image tag in '#link_logo' doesn't have a title attribute value.";
+            if (this.correctAttr("img", "title", "")) return wrong(errorMsg);
+
+            // check if img has correct alt
+            errorMsg = "The image tag in '#link_logo' doesn't have an alt attribute value.";
+            if (this.correctAttr("img", "alt", "")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #14
+            // LINKS INNER TEXT
+
+            // LINK_HOME
+            // check if link home inner-text correct
+            let errorMsg = "The anchor tag with the id of 'link_home' doesn't have the correct inner-text.";
+            if (this.innerTextExist("#link_home", "Home")) return wrong(errorMsg);
+
+            // LINK_PRODUCT
+            // check if link product inner-text correct
+            errorMsg = "The anchor tag with the id of 'link_product' doesn't have the correct inner-text.";
+            if (this.innerTextExist("#link_product", "Product")) return wrong(errorMsg);
+
+            // LINK_CONTACT
+            // check if link contact inner-text correct
+            errorMsg = "The anchor tag with the id of 'link_contact' doesn't have the correct inner-text.";
+            if (this.innerTextExist("#link_contact", "Contact")) return wrong(errorMsg);
+
+            return correct()
+        }),
+        // test #15 removed
+        // test #16 removed
+    ]
 }
 
 it("Test stage", async () => {
