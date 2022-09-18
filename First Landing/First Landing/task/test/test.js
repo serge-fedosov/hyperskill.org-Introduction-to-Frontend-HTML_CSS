@@ -26,24 +26,33 @@ class Test extends StageTest {
                 return parent.nodeName.toLowerCase() !== parentNode
             };
             this.innerTextExist = (node, correctVal) => {
-                const element = document.body.querySelector(node);
+                let element = node;
+                if (typeof element === "string") element = document.querySelector(node);
                 if (correctVal) return !element.innerText.trim().includes(correctVal)
                 return !element.innerText || element.innerText.trim().length === 0;
             };
             this.correctAttr = (node, attr, correctVal) => {
-                const element = document.querySelector(node)
+                let element = node;
+                if (typeof element === "string") element = document.querySelector(node);
                 if (!element) return true
                 const _attr = element.getAttribute(attr)
                 return !_attr || !_attr.includes(correctVal)
             };
             this.correctStyle = (node, prop, correctVal) => {
-                const element = document.querySelector(node);
+                let element = node;
+                if (typeof element === "string") element = document.querySelector(node);
                 let style = getComputedStyle(element)[prop];
                 if (style.includes("px") && !style.includes(" ")) {
                     style = Math.floor(style.split("px")[0]) + 1
                     correctVal = Math.floor(correctVal.split("px")[0]) + 1
                 }
                 return !style || style !== correctVal
+            };
+            this.correctStyleIn = (node, prop, correctVal) => {
+                let element = node;
+                if (typeof element === "string") element = document.querySelector(node);
+                let style = getComputedStyle(element)[prop];
+                return !style || !style.includes(correctVal)
             };
             // <--HELPERS
 
@@ -143,7 +152,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #9
             // NAV FLEX
 
@@ -185,7 +195,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #12
             // LINKS HREF
 
@@ -211,7 +222,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #13
             // LINK IMG
 
@@ -241,7 +253,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #14
             // LINKS INNER TEXT
 
@@ -264,7 +277,139 @@ class Test extends StageTest {
         }),
         // test #15 removed
         // test #16 removed
-    ]
+        this.page.execute(() => {
+            // test #17
+            // BANNER CONTENT EXIST
+
+            // check if home div exist
+            const homeDiv = document.body.querySelector("#home");
+            let errorMsg = "The div tag with the id of 'home' is missing inside the main tag.";
+            if (this.notExist("#home", "main", "div")) return wrong(errorMsg);
+
+            // check if second div exist
+            const secDiv = homeDiv.querySelector("div");
+            errorMsg = "The second div tag is missing inside the home div tag.";
+            if (!secDiv) return wrong(errorMsg);
+
+            // check if h1 exist
+            const h1 = secDiv.querySelector("h1");
+            errorMsg = "The h1 tag is missing inside the second div tag.";
+            if (!h1) return wrong(errorMsg);
+
+            // check if p exist
+            const paragraph = secDiv.querySelector("h1 + p");
+            errorMsg = "The paragraph tag is missing after the h1 tag inside the second div tag.";
+            if (!paragraph) return wrong(errorMsg);
+
+            // check if anchor exist
+            const anchor = secDiv.querySelector("p + a");
+            errorMsg = "The anchor tag is missing after the paragraph tag inside the second div tag.";
+            if (!anchor) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #18
+            // CONTENT INNER TEXT
+
+            // check if h1 has inner text
+            const homeDiv = document.querySelector("#home");
+            const secDiv = homeDiv.querySelector("div");
+            let errorMsg = "The h1 tag doesn't have an inner-text.";
+            if (this.innerTextExist("h1")) return wrong(errorMsg);
+
+            errorMsg = "The paragraph tag doesn't have an inner-text.";
+            if (this.innerTextExist("p")) return wrong(errorMsg);
+
+            const anchor = secDiv.querySelector("a");
+            errorMsg = "The anchor tag doesn't have an inner-text.";
+            if (this.innerTextExist(anchor)) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #19
+            // HOME DIV STYLE
+
+            // check if it has overflow hidden
+            let errorMsg = "The div tag with the id of 'home' doesn't have the correct overflow value.";
+            if (this.correctStyle("#home", "overflow", "hidden")) return wrong(errorMsg);
+
+            // check if it has text center
+            errorMsg = "The div tag with the id of 'home' doesn't have the correct text-align value.";
+            if (this.correctStyle("#home", "text-align", "center")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #20
+            // P STYLE
+
+            const homeDiv = document.querySelector("#home");
+            const secDiv = homeDiv.querySelector("div");
+            const paragraph = secDiv.querySelector("p");
+
+            // check if it has font size
+            let errorMsg = "The paragraph tag doesn't have the correct font size value.";
+            if (this.correctStyle(paragraph, "font-size", "20px")) return wrong(errorMsg);
+
+            // check if it has font weight
+            errorMsg = "The paragraph tag doesn't have the correct font weight value.";
+            if (this.correctStyle(paragraph, "font-weight", "300")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #21
+            // ANCHOR  STYLE
+
+            // check if it has href
+            const homeDiv = document.querySelector("#home");
+            const secDiv = homeDiv.querySelector("div");
+            const anchor = secDiv.querySelector("a");
+            let errorMsg = "The anchor tag doesn't have the correct href attribute value.";
+            if (this.correctAttr(anchor, "href", "#product")) return wrong(errorMsg);
+
+            // check if it has display inline-block
+            errorMsg = "The anchor tag doesn't have the correct display value.";
+            if (this.correctStyle(anchor, "display", "inline-block")) return wrong(errorMsg);
+
+            // check if it has correct border
+            errorMsg = "The anchor tag doesn't have the correct border value.";
+            if (this.correctStyleIn(anchor, "border", "1px solid")) return wrong(errorMsg);
+
+            // check if it has padding-top
+            errorMsg = "The anchor tag doesn't have the correct padding-top value.";
+            if (this.correctStyle(anchor, "padding-top", "6px")) return wrong(errorMsg);
+
+            // check if it has padding-bottom
+            errorMsg = "The anchor tag doesn't have the correct padding-bottom value.";
+            if (this.correctStyle(anchor, "padding-bottom", "6px")) return wrong(errorMsg);
+
+            // check if it has padding-right
+            errorMsg = "The anchor tag doesn't have the correct padding-right value.";
+            if (this.correctStyle(anchor, "padding-right", "12px")) return wrong(errorMsg);
+
+            // check if it has padding-left
+            errorMsg = "The anchor tag doesn't have the correct padding-left value.";
+            if (this.correctStyle(anchor, "padding-left", "12px")) return wrong(errorMsg);
+
+            // check if it has font size
+            errorMsg = "The anchor tag doesn't have the correct font size value.";
+            if (this.correctStyle(anchor, "font-size", "16px")) return wrong(errorMsg);
+
+            // check if it has font size
+            errorMsg = "The anchor tag doesn't have the correct border radius value.";
+            if (this.correctStyle(anchor, "border-radius", "4px")) return wrong(errorMsg);
+
+            // check if it has text decoration
+            errorMsg = "The anchor tag doesn't have the correct text decoration value.";
+            if (this.correctStyle(anchor, "text-decoration-line", "none")) return wrong(errorMsg);
+
+            return correct()
+
+        })]
+
 }
 
 it("Test stage", async () => {
