@@ -50,3 +50,21 @@ div a {
   color: azure;
   background-color: blue;
 }
+
+#product {
+  display: flex;
+  width: 800px;
+}
+
+#col-1,
+#col-2 {
+  text-align: center;
+  overflow: hidden;
+}
+
+#col-1 img,
+#col-2 img {
+  width: 296px;
+  border-radius: 21px 21px 0 0;
+}
+

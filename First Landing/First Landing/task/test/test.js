@@ -19,6 +19,7 @@ class Test extends StageTest {
 
             // HELPERS-->
             this.notExist = (node, parentNode = "body", nodeName) => {
+                if (typeof parentNode !== "string") return !parentNode.querySelector(node)
                 const element = document.body.querySelector(node)
                 if (!element) return true
                 if (nodeName && element.nodeName.toLowerCase() !== nodeName) return true
@@ -327,7 +328,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #19
             // HOME DIV STYLE
 
@@ -341,7 +343,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #20
             // P STYLE
 
@@ -359,7 +362,8 @@ class Test extends StageTest {
 
             return correct()
 
-        }), this.page.execute(() => {
+        }),
+        this.page.execute(() => {
             // test #21
             // ANCHOR  STYLE
 
@@ -408,7 +412,257 @@ class Test extends StageTest {
 
             return correct()
 
+        }),
+        this.page.execute(() => {
+            // test #22
+            // PRODUCT EXIST
+
+            // check if product div  exist
+            const productDiv = document.body.querySelector("#product");
+            let errorMsg = "The div tag with the id of 'product' is missing inside the main tag.";
+            if (this.notExist("#product", "main", "div")) return wrong(errorMsg);
+
+            // COLS EXIST
+
+            // check if col1 div exist
+            errorMsg = "The first column div tag with the id of 'col-1' is missing inside the product div tag.";
+            if (this.notExist("#col-1", productDiv, "div")) return wrong(errorMsg);
+
+            // check if col2 div exist
+            errorMsg = "The second column div tag with the id of 'col-2' is missing inside the product div tag.";
+            if (this.notExist("#col-2", productDiv, "div")) return wrong(errorMsg);
+
+            // CONTAINERS EXIST
+            const colDiv1 = productDiv.querySelector("#col-1");
+
+            // check if container1 div exist
+            errorMsg = "The content-container div tag is missing inside the col-1 div tag.";
+            if (this.notExist("div", colDiv1, "div")) return wrong(errorMsg);
+
+            const colDiv2 = productDiv.querySelector("#col-2");
+
+            // check if container1 div exist
+            errorMsg = "The content-container div tag is missing inside the col-2 div tag.";
+            if (this.notExist("div", colDiv2, "div")) return wrong(errorMsg);
+
+            const containerDiv1 = colDiv1.querySelector("div");
+
+            // check if h2  exist
+            errorMsg = "The h2 tag  is missing inside the content-container div tag for col-1 div.";
+            if (this.notExist("h2", containerDiv1, "h2")) return wrong(errorMsg);
+
+            // check if p  exist
+            errorMsg = "The paragraph tag  is missing inside the content-container div tag for col-1 div.";
+            if (this.notExist("h2 + p", containerDiv1, "p")) return wrong(errorMsg);
+
+            // check if img  exist
+            errorMsg = "The image tag  is missing inside the col-1 div.";
+            if (this.notExist("img", colDiv1, "img")) return wrong(errorMsg);
+
+            const containerDiv2 = colDiv2.querySelector("div");
+
+            // check if h2  exist
+            errorMsg = "The h2 tag  is missing inside the first container div tag for col-2 div.";
+            if (this.notExist("h2", containerDiv2, "h2")) return wrong(errorMsg);
+
+            // check if p  exist
+            errorMsg = "The paragraph tag  is missing inside the first container div tag for col-2 div.";
+            if (this.notExist("h2 + p", containerDiv2, "p")) return wrong(errorMsg);
+
+            // check if img  exist
+            errorMsg = "The image tag  is missing inside the col-2 div.";
+            if (this.notExist("img", colDiv2, "img")) return wrong(errorMsg);
+
+            return correct()
+        }), this.page.execute(() => {
+            // test #23
+            // PRODUCT  STYLE
+
+            // check if it has display flex
+            let errorMsg = "The product div tag doesn't have the correct display value.";
+            if (this.correctStyle("#product", "display", "flex")) return wrong(errorMsg);
+
+            // check if it has w100
+            errorMsg = "The product div tag doesn't have the correct width value.";
+            if (this.correctStyle("#product", "width", "800px")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #24
+            // COL-1  STYLE
+
+            // check if it has text align
+            let errorMsg = "The col-1 div tag doesn't have the correct text align value.";
+            if (this.correctStyle("#col-1", "text-align", "center")) return wrong(errorMsg);
+
+            // check if it has overflow hidden
+            errorMsg = "The col-1 div tag doesn't have the correct overflow value.";
+            if (this.correctStyle("#col-1", "overflow", "hidden")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #25
+            // COL-2  STYLE
+
+            // check if it has text align
+            let errorMsg = "The col-2 div tag doesn't have the correct text align value.";
+            if (this.correctStyle("#col-2", "text-align", "center")) return wrong(errorMsg);
+
+            // check if it has text overflow hidden
+            errorMsg = "The col-2 div tag doesn't have the correct overflow value.";
+            if (this.correctStyle("#col-2", "overflow", "hidden")) return wrong(errorMsg);
+
+            return correct()
+
+        }),
+        // test #26 removed
+        // test #27 removed
+        this.page.execute(() => {
+            // test #28
+            // COL1
+            // H2
+
+            const col1Div = document.body.querySelector("#col-1");
+            const containerDiv1 = col1Div.querySelector("div");
+
+            // check if it has inner text
+            const h2 = containerDiv1.querySelector("h2");
+            let errorMsg = "The h2 tag inside content-container div in col-1 div doesn't have an inner text.";
+            if (this.innerTextExist(h2)) return wrong(errorMsg);
+
+            // P
+
+            // check if it has inner text
+            const paragraph = containerDiv1.querySelector("p");
+            errorMsg = "The paragraph tag inside content-container div in col-1 div doesn't have an inner text.";
+            if (this.innerTextExist(paragraph)) return wrong(errorMsg);
+
+            // check if it has font-size
+            errorMsg = "The paragraph tag inside content-container div in col-1 div doesn't have the correct font size value.";
+            if (this.correctStyle(paragraph, "font-size", "20px")) return wrong(errorMsg);
+
+            // check if it has font weight
+            errorMsg = "The paragraph tag inside content-container div in col-1 div doesn't have the correct font weight value.";
+            if (this.correctStyle(paragraph, "font-weight", "300")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #29
+            // COL2
+            // H2
+
+            const col2Div = document.body.querySelector("#col-2");
+            const containerDiv1 = col2Div.querySelector("div");
+
+            // check if it has inner text
+            const h2 = containerDiv1.querySelector("h2");
+            let errorMsg = "The h2 tag inside content-container div in col-2 div doesn't have an inner text.";
+            if (this.innerTextExist(h2)) return wrong(errorMsg);
+
+            // P
+
+            // check if it has inner text
+            const paragraph = containerDiv1.querySelector("p");
+            errorMsg = "The paragraph tag inside content-container div in col-2 div doesn't have an inner text.";
+            if (this.innerTextExist(paragraph)) return wrong(errorMsg);
+
+            // check if it has font-size
+            errorMsg = "The paragraph tag inside content-container div in col-2 div doesn't have the correct font size value.";
+            if (this.correctStyle(paragraph, "font-size", "20px")) return wrong(errorMsg);
+
+            // check if it has font weight
+            errorMsg = "The paragraph tag inside content-container div in col-2 div doesn't have the correct font weight value.";
+            if (this.correctStyle(paragraph, "font-weight", "300")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test 30
+            // IMG1
+
+            const col1Div = document.body.querySelector("#col-1");
+            const img = col1Div.querySelector("img");
+
+            // check if it has src
+            let errorMsg = "The img tag inside col-1 div doesn't have an src attribute.";
+            if (this.correctAttr(img, "src", "")) return wrong(errorMsg);
+
+            // check if it has title
+            errorMsg = "The img tag inside col-1 div doesn't have a title attribute.";
+            if (this.correctAttr(img, "title", "")) return wrong(errorMsg);
+
+            // check if it has alt
+            errorMsg = "The img tag inside col-1 div doesn't have an alt attribute.";
+            if (this.correctAttr(img, "alt", "")) return wrong(errorMsg);
+
+            // check if it has width
+            errorMsg = "The img tag inside col-1 div doesn't have the correct width value.";
+            if (this.correctStyle(img, "width", "296px")) return wrong(errorMsg);
+
+            // check if it has border top-left-radius
+            errorMsg = "The img tag inside col-1 div  doesn't have the correct border-top-left-radius value.";
+            if (this.correctStyle(img, "border-top-left-radius", "21px")) return wrong(errorMsg);
+
+            // check if it has border top-right-radius
+            errorMsg = "The img tag inside col-1 div  doesn't have the correct border-top-right-radius value.";
+            if (this.correctStyle(img, "border-top-right-radius", "21px")) return wrong(errorMsg);
+
+            // check if it has border bottom-left-radius
+            errorMsg = "The img tag inside col-1 div  doesn't have the correct border-bottom-left-radius value.";
+            if (this.correctStyle(img, "border-bottom-left-radius", "0px")) return wrong(errorMsg);
+
+            // check if it has border bottom-right-radius
+            errorMsg = "The img tag inside col-1 div  doesn't have the correct border-bottom-right-radius value.";
+            if (this.correctStyle(img, "border-bottom-right-radius", "0px")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test 31
+            // IMG2
+
+            const col2Div = document.body.querySelector("#col-2");
+            const img = col2Div.querySelector("img");
+
+            // check if it has src
+            let errorMsg = "The img tag inside second container div in col-2 div doesn't have an src attribute value.";
+            if (this.correctAttr(img, "src", "")) return wrong(errorMsg);
+
+            // check if it has title
+            errorMsg = "The img tag inside second container div in col-2 div doesn't have a title attribute value.";
+            if (this.correctAttr(img, "title", "")) return wrong(errorMsg);
+
+            // check if it has alt
+            errorMsg = "The img tag inside second container div in col-2 div doesn't have an alt attribute value.";
+            if (this.correctAttr(img, "alt", "")) return wrong(errorMsg);
+
+            // check if it has width
+            errorMsg = "The img tag inside second container div in col-2 div doesn't have the correct width value.";
+            if (this.correctStyle(img, "width", "296px")) return wrong(errorMsg);
+
+            // check if it has border top-left-radius
+            errorMsg = "The img tag inside second container div in col-2 div  doesn't have the correct border-top-left-radius value.";
+            if (this.correctStyle(img, "border-top-left-radius", "21px")) return wrong(errorMsg);
+
+            // check if it has border top-right-radius
+            errorMsg = "The img tag inside second container div in col-2 div  doesn't have the correct border-top-right-radius value.";
+            if (this.correctStyle(img, "border-top-right-radius", "21px")) return wrong(errorMsg);
+
+            // check if it has border bottom-left-radius
+            errorMsg = "The img tag inside second container div in col-2 div  doesn't have the correct border-bottom-left-radius value.";
+            if (this.correctStyle(img, "border-bottom-left-radius", "0px")) return wrong(errorMsg);
+
+            // check if it has border bottom-right-radius
+            errorMsg = "The img tag inside second container div in col-2 div  doesn't have the correct border-bottom-right-radius value.";
+            if (this.correctStyle(img, "border-bottom-right-radius", "0px")) return wrong(errorMsg);
+
+            return correct()
+
         })]
+
 
 }
 
