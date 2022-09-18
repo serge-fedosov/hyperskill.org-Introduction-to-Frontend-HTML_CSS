@@ -75,6 +75,42 @@ p {
   flex-wrap: wrap;
 }
 
-#contact-col1 {
+#contact-col1,
+#contact-col2 {
   max-width: 100%;
+}
+
+h5 + div {
+  margin-bottom: 16px;
+}
+
+div + div {
+  margin-bottom: 16px;
+}
+
+h5 {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+form label {
+  display: block;
+}
+
+#email {
+  width: 227.906px;
+  font-size: 16px;
+  line-height: 24px;
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+button {
+  width: 227.906px;
+  border: 1px solid;
+  padding: 6px 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  text-decoration-line: none;
 }

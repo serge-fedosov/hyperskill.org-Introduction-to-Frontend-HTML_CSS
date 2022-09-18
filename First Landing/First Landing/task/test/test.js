@@ -22,7 +22,7 @@ class Test extends StageTest {
                 if (typeof parentNode !== "string") return !parentNode.querySelector(node)
                 const element = document.body.querySelector(node)
                 if (!element) return true
-                if(nodeName && element.nodeName.toLowerCase() !== nodeName) return true
+                if (nodeName && element.nodeName.toLowerCase() !== nodeName) return true
                 const parent = element.parentElement
                 return parent.nodeName.toLowerCase() !== parentNode
             };
@@ -37,17 +37,19 @@ class Test extends StageTest {
                 if (typeof element === "string") element = document.querySelector(node);
                 if (!element) return true
                 const _attr = element.getAttribute(attr)
-                return !_attr || !_attr.includes(correctVal)
+                if (!correctVal) return !_attr || _attr.trim().length === 0
+                //console.log(element[attr].toString())
+                return !_attr || !_attr.includes(correctVal);
             };
             this.correctStyle = (node, prop, correctVal) => {
                 let element = node;
                 if (typeof element === "string") element = document.querySelector(node);
                 let style = getComputedStyle(element)[prop];
+                // console.log(style, prop)
                 if (style.includes("px") && !style.includes(" ")) {
                     style = Math.floor(style.split("px")[0]) + 1
                     correctVal = Math.floor(correctVal.split("px")[0]) + 1
                 }
-                // console.log(style)
                 return !style || style !== correctVal
             };
             this.correctStyleIn = (node, prop, correctVal) => {
@@ -831,7 +833,269 @@ class Test extends StageTest {
             return correct()
         }),
         // test #40 removed
-    ]
+        this.page.execute(() => {
+            // test #41
+            // COLUMN EXIST
+
+            const contactDiv = document.body.querySelector("#contact");
+
+            // COL EXIST
+
+            // check if col div exist
+            let errorMsg = "The new column div tag with the id of 'contact-col2' is missing inside the contact div tag.";
+            if (this.notExist("#contact-col2", contactDiv, "div")) return wrong(errorMsg);
+
+            // FORM EXIST
+
+            // check if form exist
+            errorMsg = "The form tag is missing inside the new column div tag.";
+            if (this.notExist("form", "div")) return wrong(errorMsg);
+
+            // check if h5 exist
+            errorMsg = "The h5 tag is missing inside the form tag.";
+            if (this.notExist("h5", "form")) return wrong(errorMsg);
+
+            // CONTAINER DIV
+
+            // check if div exist
+            errorMsg = "The div tag wrapping the email input is missing inside the form tag.";
+            if (this.notExist("h5 + div", "form")) return wrong(errorMsg);
+
+            // check if div has margin bottom
+            errorMsg = "The div tag wrapping the email input doesn't have the correct margin bottom value.";
+            if (this.correctStyle("h5 + div", "margin-bottom", "16px")) return wrong(errorMsg);
+
+            // check if label exist
+            const wrapperDiv = contactDiv.querySelector("h5 + div");
+            errorMsg = "The label tag for email input is missing inside the wrapper div tag.";
+            if (this.notExist("label", wrapperDiv)) return wrong(errorMsg);
+
+            // check if input exist
+            errorMsg = "The input tag for email is missing inside the wrapper div tag.";
+            if (this.notExist("label + #email", wrapperDiv)) return wrong(errorMsg);
+
+            // CONTAINER DIV
+
+            const form = contactDiv.querySelector("form");
+
+            // check if div exist
+            errorMsg = "The div tag wrapping the checkbox is missing inside the form tag.";
+            if (this.notExist("div + div", form)) return wrong(errorMsg);
+
+            // check if div has margin bottom
+            errorMsg = "The div tag wrapping the checkbox doesn't have the correct margin bottom value.";
+            if (this.correctStyle("div + div", "margin-bottom", "16px")) return wrong(errorMsg);
+
+            // check if label exist
+            const wrapperDiv2 = form.querySelector("div + div");
+
+            errorMsg = "The label tag for checkbox is missing inside the wrapper div tag.";
+            if (this.notExist("label", wrapperDiv2)) return wrong(errorMsg);
+
+            // check if input exist
+            errorMsg = "The checkbox is missing inside the label tag.";
+            if (this.notExist("label > input", "label")) return wrong(errorMsg);
+
+            // check if button exist
+            errorMsg = "The button tag is missing inside the form tag.";
+            if (this.notExist("button", "form")) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #42
+            // COLUMN STYLE
+
+            const col = document.body.querySelector("#contact-col2");
+
+            // check if new column div has max-width style
+            let errorMsg = "The contact col2 div tag doesn't have the correct max-width value.";
+            if (this.correctStyle(col, "maxWidth", "100%")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #43
+            // h5 STYLE
+
+            const col = document.body.querySelector("#contact-col2");
+            const h5 = col.querySelector("h5");
+
+            // check if h5 has max-width style
+            let errorMsg = "The h5 tag doesn't have the correct font-weight value.";
+            if (this.correctStyle(h5, "font-weight", "500")) return wrong(errorMsg)
+
+            // check if h5 has padding left style
+            errorMsg = "The h5 tag doesn't have the correct font-size value.";
+            if (this.correctStyle(h5, "font-size", "20px")) return wrong(errorMsg)
+
+            // check if h5 has padding right style
+            errorMsg = "The h5 tag doesn't have the correct line-height value.";
+            if (this.correctStyle(h5, "line-height", "24px")) return wrong(errorMsg)
+
+            // check if h5 has inner text
+            errorMsg = "The h5 tag doesn't have an inner text value.";
+            if (this.innerTextExist(h5)) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #44
+            // label STYLE
+
+            const col = document.body.querySelector("#contact-col2");
+            const wrapper = col.querySelector("h5 + div");
+            const label = wrapper.querySelector("label");
+
+            // check if label has max-width style
+            let errorMsg = "The email label tag doesn't have the correct display value.";
+            if (this.correctStyle(label, "display", "block")) return wrong(errorMsg)
+
+            // check if label has inner text
+            errorMsg = "The email label tag doesn't have the correct inner text value.";
+            if (this.innerTextExist(label, "Email")) return wrong(errorMsg)
+
+            // check if label has for attr
+            errorMsg = "The email label tag doesn't have the correct for attribute value.";
+            if (this.correctAttr(label, "for", "email")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #45
+            // input attr
+
+            const input = document.body.querySelector("#email");
+
+            // check if input has max-width style
+            let errorMsg = "The email input tag doesn't have the correct width value.";
+            if (this.correctStyle(input, "width", "227.906px")) return wrong(errorMsg)
+
+            // check if input has color style
+            errorMsg = "The email input tag doesn't have the correct font size value.";
+            if (this.correctStyle(input, "font-size", "16px")) return wrong(errorMsg)
+
+            // check if input has line-height style
+            errorMsg = "The email input tag doesn't have the correct line height value.";
+            if (this.correctStyle(input, "line-height", "24px")) return wrong(errorMsg)
+
+            // check if input has border style
+            errorMsg = "The email input tag doesn't have the correct border value.";
+            if (this.correctStyleIn(input, "border", "1px solid")) return wrong(errorMsg)
+
+            // check if input has border-radius style
+            errorMsg = "The email input tag doesn't have the correct border-radius value.";
+            if (this.correctStyle(input, "border-radius", "4px")) return wrong(errorMsg)
+
+            // check if input has required attr
+            errorMsg = "The email input tag doesn't have the correct required attribute value.";
+            if (!input["required"] || input["required"].toString() !== "true") return wrong(errorMsg)
+
+            // check if input has type attr
+            errorMsg = "The email input tag doesn't have the correct type attribute value.";
+            if (this.correctAttr(input, "type", "email")) return wrong(errorMsg)
+
+            // check if input has placeholder attr
+            errorMsg = "The email input tag doesn't have a placeholder attribute value.";
+            if (this.correctAttr(input, "placeholder")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #46
+            // label STYLE
+
+            const col = document.body.querySelector("#contact-col2");
+            const wrapper = col.querySelector("div + div");
+            const label = wrapper.querySelector("label");
+
+            // check if label has inner text
+            let errorMsg = "The checkbox label tag doesn't have an inner text value.";
+            if (this.innerTextExist(label)) return wrong(errorMsg);
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #47
+            // input attr
+
+            const col = document.body.querySelector("#contact-col2");
+            const wrapper = col.querySelector("div + div");
+            const input = wrapper.querySelector("input");
+
+            // check if input has required attr
+            let errorMsg = "The checkbox input tag doesn't have the correct required attribute value.";
+            if (!input["required"] || input["required"].toString() !== "true") return wrong(errorMsg)
+
+            // check if input has type attr
+            errorMsg = "The checkbox input tag doesn't have the correct type attribute value.";
+            if (this.correctAttr(input, "type", "checkbox")) return wrong(errorMsg)
+
+            return correct()
+
+        }), this.page.execute(() => {
+            // test #48
+            // button
+
+            const col = document.body.querySelector("#contact-col2");
+            const button = col.querySelector("button");
+
+            // check if button has max-width style
+            let errorMsg = "The button tag doesn't have the correct width value.";
+            if (this.correctStyle(button, "width", "227.906px")) return wrong(errorMsg)
+
+            // check if button inner text
+            errorMsg = "The button tag doesn't have an inner text value.";
+            if (this.innerTextExist(button)) return wrong(errorMsg);
+
+            // check if button has type attr
+            errorMsg = "The button tag doesn't have the correct type attribute value.";
+            if (this.correctAttr(button, "type", "submit")) return wrong(errorMsg)
+
+            // check if it has display inline-block
+            errorMsg = "The button tag doesn't have the correct display value.";
+            if (this.correctStyle(button, "display", "inline-block")) return wrong(errorMsg);
+
+            // check if it has correct border
+            errorMsg = "The button tag doesn't have the correct border value.";
+            if (this.correctStyleIn(button, "border", "1px solid")) return wrong(errorMsg);
+
+            // check if it has padding
+            errorMsg = "The button tag doesn't have the correct padding value.";
+            if (this.correctStyle(button, "padding", "6px 12px")) return wrong(errorMsg);
+
+
+            // check if button has padding-top style
+            errorMsg = "The button tag doesn't have the correct padding-top value.";
+            if (this.correctStyle(button, "padding-top", "6px")) return wrong(errorMsg)
+
+            // check if button has padding-bottom style
+            errorMsg = "The button tag doesn't have the correct padding-bottom value.";
+            if (this.correctStyle(button, "padding-bottom", "6px")) return wrong(errorMsg)
+
+            // check if button has padding-right style
+            errorMsg = "The button tag doesn't have the correct padding-right value.";
+            if (this.correctStyle(button, "padding-right", "12px")) return wrong(errorMsg)
+
+            // check if button has padding-left style
+            errorMsg = "The button tag doesn't have the correct padding-left value.";
+            if (this.correctStyle(button, "padding-left", "12px")) return wrong(errorMsg)
+
+            // check if it has font size
+            errorMsg = "The button tag doesn't have the correct font size value.";
+            if (this.correctStyle(button, "font-size", "16px")) return wrong(errorMsg);
+
+            // check if it has font size
+            errorMsg = "The button tag doesn't have the correct border radius value.";
+            if (this.correctStyle(button, "border-radius", "4px")) return wrong(errorMsg);
+
+            // check if it has text decoration
+            errorMsg = "The button tag doesn't have the correct text decoration value.";
+            if (this.correctStyle(button, "text-decoration-line", "none")) return wrong(errorMsg);
+
+            return correct()
+
+        })]
 
 
 }
