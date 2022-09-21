@@ -219,6 +219,46 @@ files:
     }, 30000)
 
   learner_created: false
+- name: src/style.css
+  visible: true
+  text: |-
+    body {
+      background-color: aliceblue;
+    }
+
+    .container {
+      color: brown;
+      display: grid;
+      gap: 20px;
+      margin: 50px;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      /*grid-template-columns: 200px 200px 200px;*/
+      /*grid-template-rows: 200px 200px 200px;*/
+      font-family: 'Montserrat', sans-serif;
+      justify-content: space-around;
+      font-size: 1.1em;
+    }
+
+    .item {
+      background: #faf7f5;
+      border:1px solid brown;
+      border-radius: 10px;
+      padding: 0 2em 0 2em;
+      text-align: center;
+      width: 200px;
+      height: 200px;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/10247#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">JetBrains
+    Academy</a> to continue learning.
+  time: Wed, 21 Sep 2022 11:27:24 UTC
 record: -1

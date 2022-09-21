@@ -53,20 +53,26 @@ class FlashcardsTest extends StageTest {
             let k = 0;
             for (let div of divs) {
                 if (div.children.length === 9) {
-                    const font = window.getComputedStyle(div).font
-                    if (font !== '"serif"' || font !== '"Times New Roman"') {
-                        return correct();
-                    }
                     for (let card of Array.from(div.children)) {
-                        if (card.children[0] && card.children[0].tagName.toLowerCase() === 'p') {
-                            let font = window.getComputedStyle(div.children[0]).fontFamily;
-                            if (font === '"serif"' || font === '"Times New Roman"') {
-                                return wrong("Text on cards should have font different from 'serif' and 'Times New Roman'");
+                        if (card.children[0] && card.children[0].tagName.toLowerCase() === 'div') {
+                            if (card.children[0].children.length === 2) {
+                                for (let sideDir of card.children[0].children) {
+                                    if (sideDir.children[0] && sideDir.children[0].tagName && sideDir.children[0].tagName.toLowerCase() === 'p') {
+                                        let font = window.getComputedStyle(sideDir.children[0]).fontFamily;
+                                        if (font === '"serif"' || font === '"Times New Roman"') {
+                                            return wrong("Text on cards should have font different from 'serif' and 'Times New Roman'");
+                                        } else {
+                                            k++;
+                                        }
+                                    } else {
+                                        return wrong("All text on the cards should be in 'p' element");
+                                    }
+                                }
                             } else {
-                                k++;
+                                return wrong("Each card should have suggested structure - there should be 4 divs for each card.");
                             }
                         } else {
-                            return wrong("The structure should be the same as given in the step and all text on the cards should be in 'p' element");
+                            return wrong("Each card should have suggested structure - there should be 4 divs for each card.");
                         }
                     }
                 } else if (div.children && div.children.length === 3 &&
@@ -81,11 +87,25 @@ class FlashcardsTest extends StageTest {
                             return correct();
                         }
                         for (let card of divBlockOfThree.children) {
-                            const font = window.getComputedStyle(card).font;
-                            if (font !== '"serif"' || font !== '"Times New Roman"') {
-                                k++;
+                            if (card.children[0] && card.children[0].tagName.toLowerCase() === 'div') {
+                                if (card.children[0].children.length === 2) {
+                                    for (let sideDir of card.children[0].children) {
+                                        if (sideDir.children[0] && sideDir.children[0].tagName && sideDir.children[0].tagName.toLowerCase() === 'p') {
+                                            let font = window.getComputedStyle(sideDir.children[0]).fontFamily;
+                                            if (font === '"serif"' || font === '"Times New Roman"') {
+                                                return wrong("Text on cards should have font different from 'serif' and 'Times New Roman'");
+                                            } else {
+                                                k++;
+                                            }
+                                        } else {
+                                            return wrong("All text on the cards should be in 'p' element");
+                                        }
+                                    }
+                                } else {
+                                    return wrong("Each card should have suggested structure - there should be 4 divs for each card.");
+                                }
                             } else {
-                                return wrong("Text on cards should have font different from 'serif' and 'Times New Roman'");
+                                return wrong("Each card should have suggested structure - there should be 4 divs for each card.");
                             }
                         }
 
@@ -93,8 +113,7 @@ class FlashcardsTest extends StageTest {
                 }
             }
 
-
-            return k !== 9 ? wrong("9 div elements should contain p element.") : correct();
+            return k !== 18 ? wrong("There should be 2 p elements for each of the cards") : correct();
         }),
         this.page.execute(() => {
             let divs = document.body.getElementsByTagName("div");
